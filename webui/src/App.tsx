@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { DeleteConfirm } from "@/components/DeleteConfirm";
 import { Sidebar } from "@/components/Sidebar";
 import { SettingsView } from "@/components/settings/SettingsView";
+import { TechnicalCalculator } from "@/components/TechnicalCalculator";
 import { ThreadShell } from "@/components/thread/ThreadShell";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
 import { preloadMarkdownText } from "@/components/MarkdownText";
@@ -36,7 +37,7 @@ type BootState =
 const SIDEBAR_STORAGE_KEY = "nanobot-webui.sidebar";
 const RESTART_STARTED_KEY = "nanobot-webui.restartStartedAt";
 const SIDEBAR_WIDTH = 272;
-type ShellView = "chat" | "settings";
+type ShellView = "chat" | "settings" | "calculator";
 
 function AuthForm({
   failed,
@@ -331,6 +332,16 @@ function Shell({ onModelNameChange, onLogout }: { onModelNameChange: (modelName:
     setMobileSidebarOpen(false);
   }, []);
 
+  const onOpenCalculator = useCallback(() => {
+    setView("calculator");
+    setMobileSidebarOpen(false);
+  }, []);
+
+  const onBackFromCalculator = useCallback(() => {
+    setView("chat");
+    setMobileSidebarOpen(false);
+  }, []);
+
   const onBackToChat = useCallback(() => {
     setView("chat");
     setMobileSidebarOpen(false);
@@ -430,6 +441,7 @@ function Shell({ onModelNameChange, onLogout }: { onModelNameChange: (modelName:
     onRequestDelete: (key: string, label: string) =>
       setPendingDelete({ key, label }),
     onOpenSettings,
+    onOpenCalculator,
   };
   const showMainSidebar = view !== "settings";
 
@@ -484,6 +496,8 @@ function Shell({ onModelNameChange, onLogout }: { onModelNameChange: (modelName:
             onRestart={onRestart}
             isRestarting={isRestarting}
           />
+        ) : view === "calculator" ? (
+          <TechnicalCalculator onBack={onBackFromCalculator} />
         ) : (
           <ThreadShell
             session={activeSession}
